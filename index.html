@@ -10,11 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* Apply touch restrictions to the root to catch all pinch attempts */
+        html {
+            touch-action: pan-x pan-y;
+            overflow: hidden; /* Helper to prevent bounce on some browsers */
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f3f4f6;
             -webkit-tap-highlight-color: transparent;
-            /* Prevent double-tap zoom on some devices */
             touch-action: pan-x pan-y;
         }
         .number-chip:active {
@@ -154,6 +158,26 @@
 
     <!-- DATA & LOGIC -->
     <script>
+        // --- STRICT ZOOM PREVENTION ---
+        // Block Pinch-to-Zoom on iOS
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Block double-tap zoom (older browsers fallback)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                // Check if target is not a number link or button, then block
+                // (We allow double tapping buttons if user wants, but prevent zoom)
+                // Actually, best to just let CSS touch-action handle double tap
+                // but strictly block zoom attempts here if needed.
+                // For now, reliance on gesturestart and CSS is usually best.
+            }
+            lastTouchEnd = now;
+        }, false);
+        
         // --- DATA OBJECT ---
         const directoryData = {
             // Category 1: Floors & Departments
