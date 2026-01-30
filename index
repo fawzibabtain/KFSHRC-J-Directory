@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KFSHRC-J Directory</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .number-chip:active {
+            transform: scale(0.96);
+            background-color: #dcfce7; /* green-100 */
+        }
+        /* Custom scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-green-900 text-white p-4 shadow-lg flex items-center justify-between shrink-0 relative">
+        <!-- Absolute position home button to not mess up centering -->
+        <button id="homeBtn" onclick="goHome()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 text-xs bg-green-800 hover:bg-green-700 px-3 py-1.5 rounded-lg transition border border-green-700">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+
+        <!-- Centered Title -->
+        <div class="w-full text-center">
+            <h1 class="font-bold text-xl tracking-wide flex items-center justify-center gap-2">
+                <i class="fa-solid fa-hospital text-green-300"></i> KFSHRC-J
+            </h1>
+            <p class="text-[10px] text-green-200 uppercase tracking-widest mt-0.5">Quick Directory</p>
+        </div>
+        
+        <!-- Placeholder for symmetry or settings later -->
+        <div class="w-10"></div> 
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContainer" class="flex-1 overflow-y-auto relative w-full max-w-md mx-auto bg-white shadow-xl h-full flex flex-col">
+        
+        <!-- LANDING PAGE (Menu + Global Search) -->
+        <div id="menuView" class="p-6 h-full flex flex-col fade-in overflow-y-auto">
+            
+            <div class="text-center mb-6 mt-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">Whom to call?</h2>
+                <p class="text-gray-500 text-sm">Find extensions & MCDs</p>
+            </div>
+
+            <!-- Universal Search Box -->
+            <div class="relative mb-8 shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-search text-green-600"></i>
+                </div>
+                <input type="text" id="globalSearchInput" onkeyup="handleGlobalSearch()" 
+                    class="block w-full pl-10 pr-3 py-3 border-2 border-green-100 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 sm:text-sm transition-all" 
+                    placeholder="A quick search...">
+            </div>
+
+            <!-- Categories Grid (Hidden when searching) -->
+            <div id="categoryGrid" class="grid grid-cols-1 gap-4 pb-8">
+                <button onclick="loadCategory('floors')" class="group flex items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-green-400 hover:shadow-md transition-all duration-200 text-left active:bg-gray-50">
+                    <div class="w-12 h-12 bg-green-50 text-green-700 rounded-full flex items-center justify-center text-xl mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">Floors & Depts</h3>
+                        <p class="text-xs text-gray-500">Wards, Clinics, Labs</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                </button>
+
+                <button onclick="loadCategory('charge')" class="group flex items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-green-400 hover:shadow-md transition-all duration-200 text-left active:bg-gray-50">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center text-xl mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-user-nurse"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">Charge Nurse</h3>
+                        <p class="text-xs text-gray-500">Ward Charge MCDs</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                </button>
+
+                <button onclick="loadCategory('unified')" class="group flex items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-green-400 hover:shadow-md transition-all duration-200 text-left active:bg-gray-50">
+                    <div class="w-12 h-12 bg-orange-50 text-orange-700 rounded-full flex items-center justify-center text-xl mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-briefcase-medical"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">Unified MCD</h3>
+                        <p class="text-xs text-gray-500">Support, RT, Case Mgr</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                </button>
+
+                <button onclick="loadCategory('oncall')" class="group flex items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-green-400 hover:shadow-md transition-all duration-200 text-left active:bg-gray-50">
+                    <div class="w-12 h-12 bg-red-50 text-red-700 rounded-full flex items-center justify-center text-xl mr-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">On-Call MCD</h3>
+                        <p class="text-xs text-gray-500">Medical Specialties</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                </button>
+            </div>
+
+            <!-- Global Search Results (Visible when searching) -->
+            <div id="globalSearchResults" class="hidden space-y-3 pb-8">
+                <!-- Results injected here -->
+            </div>
+        </div>
+
+        <!-- CATEGORY LIST VIEW (Specific Category) -->
+        <div id="listView" class="hidden h-full flex flex-col bg-gray-50">
+            <!-- Header for list -->
+            <div class="bg-white px-4 py-3 border-b sticky top-0 z-20 shadow-sm">
+                <h2 id="listTitle" class="text-lg font-bold text-green-900 mb-2">Category</h2>
+                <input type="text" id="categorySearchInput" onkeyup="filterCategoryList()" placeholder="Filter this list..." 
+                    class="w-full bg-gray-100 text-sm text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-green-500">
+            </div>
+
+            <!-- List Content -->
+            <div id="listContent" class="flex-1 overflow-y-auto p-4 space-y-3 pb-20">
+                <!-- Items injected here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 text-center py-3 px-4 border-t shrink-0 z-10">
+        <p class="text-xs font-semibold text-gray-500">KFSHRC-J Quick Directory Web App</p>
+        <p class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 inline-block px-2 py-0.5 rounded border border-gray-200">
+            Developed by Dr. Fawzi Babtain : 40591
+        </p>
+    </footer>
+
+    <!-- DATA & LOGIC -->
+    <script>
+        // --- DATA OBJECT ---
+        const directoryData = {
+            // Category 1: Floors & Departments
+            floors: [
+                { section: "Nursing Units", name: "MSICU", number: "62460 / 62410 / 49497" },
+                { section: "Nursing Units", name: "CCU", number: "62467 / 62468" },
+                { section: "Nursing Units", name: "CSICU", number: "62429 / 68642 / 42350" },
+                { section: "Nursing Units", name: "SICU", number: "62078 / 62076 / 49181" },
+                { section: "Nursing Units", name: "NICU", number: "61559 / 61547 / 40320" },
+                { section: "Nursing Units", name: "PICU", number: "62413 / 68644 / 62061" },
+                { section: "Nursing Units", name: "RTU", number: "61351 / 61352 / 49146" },
+                { section: "Nursing Units", name: "1 North (Gen Peds)", number: "61834 / 61814" },
+                { section: "Nursing Units", name: "1 South (Neuro)", number: "61821 / 61843" },
+                { section: "Nursing Units", name: "2 North (CVT)", number: "62810 / 62813" },
+                { section: "Nursing Units", name: "2 South (CVT)", number: "62822 / 62820" },
+                { section: "Nursing Units", name: "3 North (Surgery)", number: "63812 / 63810" },
+                { section: "Nursing Units", name: "3 South (Surgery)", number: "63820 / 63821" },
+                { section: "Nursing Units", name: "4 North (Adult Onc)", number: "64810 / 64813" },
+                { section: "Nursing Units", name: "4 South (Adult Onc)", number: "64822 / 64821" },
+                { section: "Nursing Units", name: "5 North (Medicine)", number: "65811 / 65812" },
+                { section: "Nursing Units", name: "5 South (Medicine)", number: "65107 / 65108" },
+                { section: "Nursing Units", name: "OB/GYN North", number: "61211 / 61254" },
+                { section: "Nursing Units", name: "OB/GYN South", number: "61219 / 61220" },
+                { section: "Nursing Units", name: "Peds Oncology", number: "63221 / 63224" },
+                { section: "Nursing Units", name: "Peds BMT", number: "64422" },
+                { section: "Nursing Units", name: "Protocol Unit", number: "64241 / 64210" },
+                { section: "Nursing Units", name: "ACA (24H) Main", number: "65445 / 65444" },
+                
+                { section: "Emergency", name: "ER Charge Nurse", number: "65559 / 65537" },
+                { section: "Emergency", name: "ER Reception", number: "65599 / 67979" },
+                { section: "Emergency", name: "Red Zone Charge", number: "65451" },
+                { section: "Emergency", name: "Code Blue / EMS Hotline", number: "62069" },
+
+                { section: "Pharmacy", name: "In-Patient Pharmacy", number: "62400 / 62445" },
+                { section: "Pharmacy", name: "Out-Patient Pharmacy", number: "61709 / 61710" },
+                { section: "Pharmacy", name: "Narcotic Pharmacy", number: "62308 / 62304" },
+                { section: "Pharmacy", name: "EMS Pharmacy", number: "65470" },
+                { section: "Pharmacy", name: "IV Room", number: "62406" },
+
+                { section: "Lab", name: "Lab Reception", number: "67470 / 67467" },
+                { section: "Lab", name: "Blood Bank", number: "67583" },
+                { section: "Lab", name: "Chemistry", number: "67563" },
+                { section: "Lab", name: "Hematology", number: "67513 / 67519" },
+                { section: "Lab", name: "Microbiology", number: "68608" },
+
+                { section: "Clinics", name: "Outpatient Clinics", number: "See specific dept" },
+                { section: "Clinics", name: "Endoscopy", number: "62568 / 62576" },
+                { section: "Clinics", name: "DPU", number: "61441 / 61443" },
+                { section: "Clinics", name: "RDU", number: "61970 / 61978" },
+                { section: "Clinics", name: "CATH Lab", number: "62517 / 62518" },
+
+                { section: "Radiology", name: "Radiology Reception", number: "67676 / 67600" },
+                { section: "Radiology", name: "MRI", number: "67638 / 67640" },
+                { section: "Radiology", name: "CT Scan", number: "67624 / 61322" },
+                { section: "Radiology", name: "Ultrasound", number: "67442" },
+                { section: "Radiology", name: "Portable X-Ray", number: "40959 / 40960" },
+            ],
+
+            // Category 2: Charge Nurse MCDs
+            charge: [
+                { section: "Charge Nurse", name: "1st North", number: "N/A" }, 
+                { section: "Charge Nurse", name: "1st South", number: "48860" },
+                { section: "Charge Nurse", name: "2nd North", number: "40254" },
+                { section: "Charge Nurse", name: "2nd South", number: "40841" },
+                { section: "Charge Nurse", name: "3rd North", number: "41487" },
+                { section: "Charge Nurse", name: "3rd South", number: "40949" },
+                { section: "Charge Nurse", name: "5th North", number: "43422" },
+                { section: "Charge Nurse", name: "5th South", number: "49760" },
+                { section: "Charge Nurse", name: "OB/GYN", number: "43664" },
+                { section: "Charge Nurse", name: "ICU Charge", number: "49497" },
+                { section: "Charge Nurse", name: "RTU Charge", number: "49146" },
+                { section: "Charge Nurse", name: "24h Admission/ACA", number: "43910" },
+                { section: "Charge Nurse", name: "HHC Head Nurse", number: "43723" },
+                { section: "Charge Nurse", name: "RDU Charge", number: "43835" },
+                { section: "Charge Nurse", name: "ER Charge", number: "65537" },
+                { section: "Charge Nurse", name: "ACA Charge", number: "46719" },
+            ],
+
+            // Category 3: Unified MCD (General Support)
+            unified: [
+                { section: "Emergency", name: "Code Blue / EMS", number: "62069" },
+                { section: "Support", name: "Admission Office", number: "67050" },
+                { section: "Support", name: "Security Front Desk", number: "65585" },
+                { section: "Support", name: "IT On Call", number: "66666" },
+                { section: "Support", name: "Operator / Call Center", number: "61399" },
+                { section: "Respiratory", name: "RT Charge", number: "41459" },
+                { section: "Respiratory", name: "RT MCD", number: "40548 / 40718" },
+                { section: "Social/Case", name: "Case Manager", number: "43719" },
+                { section: "Social/Case", name: "Social Worker", number: "Check Dept" },
+                { section: "Support", name: "Bed Management", number: "67050" },
+                { section: "Support", name: "Housekeeping", number: "68444 / 43766" },
+                { section: "Support", name: "Maintenance", number: "62261" },
+                { section: "Support", name: "Transportation", number: "68444" },
+                { section: "Support", name: "Medical Records", number: "67762" },
+                { section: "Support", name: "Patient Relations", number: "41599" },
+                { section: "Pharmacy", name: "Discharge Pharmacy", number: "67459 / 40867" },
+                { section: "Pharmacy", name: "Drug Info (Sultan)", number: "40979" },
+                { section: "Lab", name: "Phlebotomy / Processing", number: "67580" },
+            ],
+
+            // Category 4: On-Call MCD (Specialties)
+            oncall: [
+                { section: "Medical", name: "Internal Medicine", number: "43875" },
+                { section: "Medical", name: "ICU", number: "41147" },
+                { section: "Medical", name: "Anesthesia", number: "41661" },
+                { section: "Medical", name: "Cardiology", number: "41686" },
+                { section: "Medical", name: "Radiology", number: "41514" },
+                { section: "Medical", name: "Hematology", number: "49197" },
+                { section: "Medical", name: "Neurology", number: "49775" },
+                { section: "Medical", name: "Rheumatology", number: "47765" },
+                { section: "Medical", name: "OB/GYN", number: "41465" },
+                { section: "Medical", name: "Oncology", number: "40552" },
+                { section: "Medical", name: "Pain Management", number: "41063" },
+                { section: "Medical", name: "Pain Consult (Dr Bader)", number: "40490" },
+                { section: "Medical", name: "ER Consultant", number: "65559 / 65579" },
+                { section: "Medical", name: "ECHO On-Call MD", number: "41686" },
+                { section: "Surgical", name: "Surgery (Gen)", number: "See Unified List if not here" },
+                { section: "Support", name: "TPN On-Call", number: "43828" },
+                { section: "Support", name: "Speech (Dr Sameera)", number: "49205" },
+                { section: "Support", name: "Endoscopy On Call", number: "Check Dept" },
+                { section: "Radiology", name: "Angio", number: "67614" },
+                { section: "Radiology", name: "CT Tech", number: "40675" },
+                { section: "Radiology", name: "MRI Under GA", number: "44731" },
+            ]
+        };
+
+        // Flatten data for Global Search
+        const allItems = [
+            ...directoryData.floors.map(i => ({...i, source: 'Floors'})),
+            ...directoryData.charge.map(i => ({...i, source: 'Charge'})),
+            ...directoryData.unified.map(i => ({...i, source: 'Unified'})),
+            ...directoryData.oncall.map(i => ({...i, source: 'OnCall'}))
+        ];
+
+        // --- DOM ELEMENTS ---
+        const menuView = document.getElementById('menuView');
+        const categoryGrid = document.getElementById('categoryGrid');
+        const globalSearchResults = document.getElementById('globalSearchResults');
+        const globalSearchInput = document.getElementById('globalSearchInput');
+        
+        const listView = document.getElementById('listView');
+        const listContent = document.getElementById('listContent');
+        const listTitle = document.getElementById('listTitle');
+        const homeBtn = document.getElementById('homeBtn');
+        const categorySearchInput = document.getElementById('categorySearchInput');
+
+        let currentCategory = [];
+
+        // --- FUNCTIONS ---
+
+        // Helper: Generate Buttons for Number String
+        function generateNumberButtons(numStr) {
+            // Remove non-alphanumeric chars that aren't /, but keep spaces
+            const cleanStr = numStr || "N/A";
+            
+            // Check if it's text instruction like "See Unified List"
+            const hasNumbers = /\d{4,}/.test(cleanStr);
+            
+            if (!hasNumbers) {
+                return `<span class="inline-block px-3 py-1 bg-gray-100 text-gray-500 rounded text-sm font-mono">${cleanStr}</span>`;
+            }
+
+            // Split by slash
+            const parts = cleanStr.split('/').map(s => s.trim()).filter(s => s);
+            
+            return parts.map(part => {
+                // Extract digits for dialer
+                const dialDigits = part.replace(/\D/g, '');
+                
+                // Only make it a link if it looks like a number (at least 3 digits)
+                if (dialDigits.length >= 3) {
+                    return `
+                    <a href="tel:${dialDigits}" class="number-chip inline-flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-bold shadow-sm hover:bg-green-600 hover:text-white hover:border-green-600 transition-all cursor-pointer no-underline">
+                        <i class="fa-solid fa-phone text-xs opacity-70"></i> ${part}
+                    </a>`;
+                } else {
+                    return `<span class="inline-block px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium border border-gray-200">${part}</span>`;
+                }
+            }).join(' ');
+        }
+
+        function createItemCard(item) {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-4 rounded-xl border border-gray-200 shadow-sm transition-colors hover:border-green-300';
+            
+            const numbersHtml = generateNumberButtons(item.number);
+            const badgeColor = item.source === 'Charge' ? 'bg-blue-100 text-blue-700' :
+                             item.source === 'OnCall' ? 'bg-red-100 text-red-700' :
+                             item.source === 'Unified' ? 'bg-orange-100 text-orange-700' :
+                             'bg-green-100 text-green-700';
+            
+            const badgeText = item.source ? item.source : (item.section || 'General');
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${badgeColor} mb-1 inline-block">
+                            ${badgeText}
+                        </span>
+                        <h3 class="font-bold text-gray-900 text-lg leading-tight">${item.name}</h3>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    ${numbersHtml}
+                </div>
+            `;
+            return card;
+        }
+
+        // --- NAVIGATION LOGIC ---
+
+        function loadCategory(key) {
+            currentCategory = directoryData[key];
+            
+            const titles = {
+                'floors': 'Floors & Departments',
+                'charge': 'Charge Nurse MCDs',
+                'unified': 'Unified MCDs',
+                'oncall': 'On-Call MCDs'
+            };
+            listTitle.textContent = titles[key];
+
+            menuView.classList.add('hidden');
+            listView.classList.remove('hidden');
+            homeBtn.classList.remove('hidden');
+            
+            categorySearchInput.value = '';
+            renderListInContainer(currentCategory, listContent);
+        }
+
+        function goHome() {
+            listView.classList.add('hidden');
+            menuView.classList.remove('hidden');
+            homeBtn.classList.add('hidden');
+            
+            // Reset global search
+            globalSearchInput.value = '';
+            handleGlobalSearch();
+        }
+
+        // --- SEARCH LOGIC ---
+
+        function handleGlobalSearch() {
+            const term = globalSearchInput.value.toLowerCase().trim();
+            
+            if (term.length === 0) {
+                categoryGrid.classList.remove('hidden');
+                globalSearchResults.classList.add('hidden');
+                globalSearchResults.innerHTML = '';
+                return;
+            }
+
+            // Show Search View
+            categoryGrid.classList.add('hidden');
+            globalSearchResults.classList.remove('hidden');
+
+            const filtered = allItems.filter(item => 
+                item.name.toLowerCase().includes(term) || 
+                item.number.includes(term) ||
+                (item.section && item.section.toLowerCase().includes(term))
+            );
+
+            renderListInContainer(filtered, globalSearchResults, true);
+        }
+
+        function filterCategoryList() {
+            const term = categorySearchInput.value.toLowerCase().trim();
+            const filtered = currentCategory.filter(item => 
+                item.name.toLowerCase().includes(term) || 
+                item.number.includes(term) ||
+                (item.section && item.section.toLowerCase().includes(term))
+            );
+            renderListInContainer(filtered, listContent);
+        }
+
+        // --- RENDERING ---
+
+        function renderListInContainer(items, container, isGlobal = false) {
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 opacity-50">
+                        <i class="fa-regular fa-folder-open text-4xl mb-2 text-gray-300"></i>
+                        <p class="text-gray-400">No matching results found</p>
+                    </div>`;
+                return;
+            }
+
+            items.forEach(item => {
+                container.appendChild(createItemCard(item));
+            });
+        }
+
+    </script>
+</body>
+</html>
